@@ -1,0 +1,68 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helper Functions ---
+    function isSignedIn() { return request.auth != null; }
+    function isVerified() { return isSignedIn() && request.auth.token.email_verified == true; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // User Validation
+    function isValidUser(data) {
+      return data.userId == request.auth.uid
+        && data.displayName is string && data.displayName.size() <= 100
+        && data.email is string && data.email.size() <= 100
+        && data.credits is number && data.credits >= 0
+        && data.bottlesRecycled is number && data.bottlesRecycled >= 0
+        && (data.keys().hasAll(['lastActive']) ? data.lastActive is string : true);
+    }
+
+    // Transaction Validation
+    function isValidTransaction(data) {
+      return data.keys().hasAll(['transactionId', 'userId', 'kioskId', 'bottlesCount', 'creditsEarned', 'timestamp'])
+        && data.keys().size() == 6
+        && data.userId == request.auth.uid
+        && data.bottlesCount is number && data.bottlesCount > 0 && data.bottlesCount < 100
+        && data.creditsEarned is number && data.creditsEarned >= 0 && data.creditsEarned < 1000
+        && data.timestamp == request.time
+        && isValidId(data.transactionId)
+        && isValidId(data.kioskId);
+    }
+
+    // --- Collection Routes ---
+
+    // Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isVerified() 
+        && isValidUser(incoming()) 
+        && incoming().keys().hasAll(['userId', 'displayName', 'email', 'credits', 'bottlesRecycled'])
+        && (incoming().keys().size() == 5 || incoming().keys().size() == 6); // with or without lastActive
+      allow update: if isOwner(userId) && isVerified() 
+        && isValidUser(incoming()) 
+        && incoming().diff(existing()).affectedKeys().hasOnly(['credits', 'bottlesRecycled', 'lastActive']);
+    }
+
+    // Kiosks Collection
+    match /kiosks/{kioskId} {
+      allow get, list: if true; 
+      allow write: if false; 
+    }
+
+    // Transactions Collection
+    match /transactions/{transactionId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && isValidTransaction(incoming());
+      allow update, delete: if false; 
+    }
+  }
+}

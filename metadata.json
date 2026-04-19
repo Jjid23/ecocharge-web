@@ -1,0 +1,6 @@
+{
+  "name": "EcoCharge Kiosk",
+  "description": "A sustainable recycling and charging kiosk interface. Drop plastic bottles to earn credits and charge your phone for free.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": []
+}

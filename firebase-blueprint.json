@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and recycling stats",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "credits": { "type": "number" },
+        "bottlesRecycled": { "type": "number" },
+        "lastActive": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "displayName", "email", "credits", "bottlesRecycled"]
+    },
+    "Kiosk": {
+      "title": "Kiosk",
+      "description": "Recycling kiosk station information",
+      "type": "object",
+      "properties": {
+        "kioskId": { "type": "string" },
+        "name": { "type": "string" },
+        "location": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "maintenance", "full"] },
+        "availablePorts": { "type": "number" },
+        "totalPorts": { "type": "number" },
+        "totalBottlesCollected": { "type": "number" }
+      },
+      "required": ["kioskId", "name", "status", "availablePorts", "totalPorts"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Record of a recycling session",
+      "type": "object",
+      "properties": {
+        "transactionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "kioskId": { "type": "string" },
+        "bottlesCount": { "type": "number" },
+        "creditsEarned": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["transactionId", "userId", "kioskId", "bottlesCount", "creditsEarned", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile data"
+    },
+    "/kiosks/{kioskId}": {
+      "schema": "Kiosk",
+      "description": "Station data"
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Recycling transactions log"
+    }
+  }
+}
