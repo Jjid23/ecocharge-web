@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "motion/react";
-import { Recycle, Zap, QrCode, BatteryCharging, Leaf, ShieldCheck, LogIn, LogOut, User as UserIcon, Coins, History, ArrowRight, Loader2, Search, ArrowLeft, MoreHorizontal, Settings, Camera, Lightbulb, Sparkles, Smartphone, CheckCircle, Info, RefreshCw, HelpCircle } from "lucide-react";
+import { Recycle, Zap, QrCode, BatteryCharging, Leaf, ShieldCheck, LogIn, LogOut, User as UserIcon, Coins, History, ArrowRight, Loader2, Search, ArrowLeft, MoreHorizontal, Settings, Camera, Lightbulb, Sparkles, Smartphone, CheckCircle, Info, RefreshCw, HelpCircle, ShieldAlert } from "lucide-react";
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { auth, db } from "./lib/firebase";
 import { analyzeBottle, type BottleAnalysis } from "./services/geminiService";

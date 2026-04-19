@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "missing_api_key_prevent_crash" });
 
 export interface BottleAnalysis {
   type: 'PET' | 'HDPE' | 'REJECTED' | 'UNKNOWN';
