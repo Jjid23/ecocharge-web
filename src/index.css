@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+/* ── Kiosk Portrait Layout ─────────────────────────────────────── */
+
+/* Prevent text selection and context menus on kiosk touch screen */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html, body {
+  overscroll-behavior: none;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+/* Kiosk screen wrapper — centers a 480px wide portrait column on large displays */
+.kiosk-screen {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* On desktop/wide screens, show a kiosk bezel */
+@media (min-width: 560px) {
+  body {
+    background-color: #010e07;
+  }
+  .kiosk-screen {
+    border-left: 1px solid #064e3b40;
+    border-right: 1px solid #064e3b40;
+    box-shadow: 0 0 80px #059669, 0 0 0 1px #05966920;
+  }
+}
+
+/* Admin console — full width, no portrait constraint */
+.admin-layout {
+  width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Touch-friendly minimum tap target */
+button, a, select, input[type="checkbox"] {
+  min-height: 44px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  min-height: 52px;
+  font-size: 16px; /* prevents iOS zoom */
+}
+
+/* Smooth page scroll */
+.kiosk-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.kiosk-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Bottom safe-area padding for devices with home bar */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+.mb-nav {
+  margin-bottom: 72px; /* height of bottom nav bar */
+}
