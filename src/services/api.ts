@@ -197,6 +197,15 @@ export async function analyzeBottleImageYolo(imageData: string): Promise<Detecti
       headers: authHeaders(),
       body: JSON.stringify({ imageData })
     });
+
+    // Handle server sleeping (Render free tier)
+    if (!res.ok) {
+      if (res.status >= 500 || res.status === 0) {
+        throw new Error('⏳ Detection server is waking up. Please wait 30 seconds and try again.');
+      }
+      throw new Error(`Detection failed (HTTP ${res.status}). Please try again.`);
+    }
+
     const data = await res.json().catch(() => null);
 
     // YOLO server returned a response
@@ -222,7 +231,6 @@ export async function analyzeBottleImageYolo(imageData: string): Promise<Detecti
     };
   } catch (err) {
     console.error('[YOLO] analyzeBottleImageYolo error:', err);
-    // Server error — rethrow so the caller shows the real message
     throw err;
   }
 }
