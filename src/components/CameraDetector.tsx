@@ -130,8 +130,11 @@ export const CameraDetector: React.FC<CameraDetectorProps> = ({ onSuccess, onNav
     try {
       const aiRes = await analyzeBottleImageYolo(base64);
 
-      if (!aiRes || aiRes.confidence === 0 || aiRes.detectedLabel === 'none') {
-        setCameraError('No bottle detected. Hold the bottle clearly in frame and try again.');
+      // Debug: log what YOLO returned
+      console.log('[YOLO]', aiRes);
+
+      if (!aiRes || aiRes.detectedLabel === 'none' || aiRes.pointsEarned === 0) {
+        setCameraError(`No bottle detected (confidence: ${(aiRes?.confidence ?? 0).toFixed(4)}). Hold the bottle closer and ensure good lighting.`);
         setScanning(false);
         return;
       }
